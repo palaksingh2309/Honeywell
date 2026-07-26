@@ -1,0 +1,5 @@
+grade_name,target_basis_weight,target_moisture,target_ash,target_caliper,target_speed,target_steam,target_stock_flow
+Grade A,80.0,5.0,8.0,0.10,450.0,2.5,2500.0
+Grade B,120.0,6.0,12.0,0.15,350.0,3.0,3000.0
+Grade C,60.0,4.5,6.0,0.08,550.0,2.2,2200.0
+Grade D,150.0,6.5,15.0,0.18,300.0,3.5,3500.0
