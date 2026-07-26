@@ -16,9 +16,14 @@ except ImportError:
     SHAP_AVAILABLE = False
     print("SHAP library not fully available locally. Activating robust explainability fallback.")
 
+# Dynamic Base Directory Resolution
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+
 class MLEngine:
     def __init__(self):
-        self.model_path = 'p:\\Honeywell\\models\\xgboost.pkl'
+        self.model_path = os.path.join(BASE_DIR, "models", "xgboost.pkl")
+        if not os.path.exists(self.model_path):
+            self.model_path = os.path.join(os.path.dirname(__file__), "..", "..", "models", "xgboost.pkl")
         self.model_data = None
         self.explainer = None
         self.load_model()
@@ -236,7 +241,9 @@ class MLEngine:
 
     def search_similarity(self, current_state: Dict[str, Any], from_grade: str, to_grade: str) -> List[Dict[str, Any]]:
         """KNN Cosine Similarity search over successful historical runs"""
-        hist_path = 'p:\\Honeywell\\data\\historical.csv'
+        hist_path = os.path.join(BASE_DIR, "data", "historical.csv")
+        if not os.path.exists(hist_path):
+            hist_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "historical.csv")
         if not os.path.exists(hist_path):
             return []
 

@@ -1,6 +1,9 @@
 import csv
 import random
 import numpy as np
+import os
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 def generate_historical_data(filepath, num_runs=200):
     grades = ['Grade A', 'Grade B', 'Grade C', 'Grade D']
@@ -28,35 +31,26 @@ def generate_historical_data(filepath, num_runs=200):
             
             target = recipes[to_g]
             
-            # Simulate operator actions during transition
-            # Slower speed / proper steam = successful transition
-            speed_error = random.uniform(-0.15, 0.15) # deviation from target speed
-            steam_error = random.uniform(-0.12, 0.12) # deviation from target steam
-            stock_error = random.uniform(-0.10, 0.10) # deviation from target stock flow
+            speed_error = random.uniform(-0.15, 0.15)
+            steam_error = random.uniform(-0.12, 0.12)
+            stock_error = random.uniform(-0.10, 0.10)
             
-            # Basis weight deviation depends on these parameter mismatches
-            # If stock flow is too high or speed is too low, basis weight goes up.
-            # BW is proportional to stock_flow / speed.
             speed_factor = 1.0 + speed_error
             stock_factor = 1.0 + stock_error
             steam_factor = 1.0 + steam_error
             
             bw_actual = target['basis_weight'] * (stock_factor / speed_factor)
-            bw_dev = ((bw_actual - target['basis_weight']) / target['basis_weight']) * 100.0 # percentage deviation
+            bw_dev = ((bw_actual - target['basis_weight']) / target['basis_weight']) * 100.0
             
-            # Moisture depends on speed and steam
-            # Higher speed = less drying = higher moisture. Higher steam = more drying = lower moisture.
             moisture_actual = target['moisture'] * (speed_factor / steam_factor)
             moisture_dev = abs(moisture_actual - target['moisture'])
             
-            # Caliper and Ash deviations
             ash_actual = target['ash'] * (stock_factor * (1 + random.uniform(-0.05, 0.05)))
             caliper_actual = target['caliper'] * (stock_factor / steam_factor * (1 + random.uniform(-0.03, 0.03)))
             
-            # Determine status based on Basis Weight deviation (bounds: +/- 2.5%)
             if abs(bw_dev) <= 1.2 and moisture_dev < 0.4:
                 status = 'Safe'
-                stabilization_time = random.uniform(15, 30) # minutes
+                stabilization_time = random.uniform(15, 30)
                 waste_tons = stabilization_time * 0.1
             elif abs(bw_dev) <= 2.5 and moisture_dev < 0.8:
                 status = 'Warning'
@@ -67,7 +61,6 @@ def generate_historical_data(filepath, num_runs=200):
                 stabilization_time = random.uniform(60, 120)
                 waste_tons = stabilization_time * 0.5
             
-            # Add some randomness/noise to the final parameters recorded
             speed = target['speed'] * speed_factor
             steam = target['steam'] * steam_factor
             stock = target['stock_flow'] * stock_factor
@@ -82,5 +75,7 @@ def generate_historical_data(filepath, num_runs=200):
             ])
 
 if __name__ == '__main__':
-    generate_historical_data('p:\\Honeywell\\data\\historical.csv')
-    print("Generated 200 historical grade change runs successfully.")
+    csv_path = os.path.join(BASE_DIR, 'data', 'historical.csv')
+    os.makedirs(os.path.dirname(csv_path), exist_ok=True)
+    generate_historical_data(csv_path)
+    print(f"Generated 200 historical grade change runs successfully at {csv_path}")

@@ -6,9 +6,15 @@ from sklearn.preprocessing import LabelEncoder
 import xgboost as xgb
 import os
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 def train_model():
+    csv_path = os.path.join(BASE_DIR, "data", "historical.csv")
+    models_dir = os.path.join(BASE_DIR, "models")
+    model_path = os.path.join(models_dir, "xgboost.pkl")
+    
     # Load dataset
-    df = pd.read_csv('p:\\Honeywell\\data\\historical.csv')
+    df = pd.read_csv(csv_path)
     
     # Feature columns
     features = ['machine_speed', 'steam_pressure', 'stock_flow', 'moisture', 'ash', 'caliper']
@@ -17,9 +23,6 @@ def train_model():
     # Target column
     y = df['status']
     
-    # Encode labels (Safe: 0, Warning: 1, Critical: 2)
-    # We sort classes so that Safe=2, Warning=1, Critical=0 depending on alphabetic sort
-    # Standard LabelEncoder sorts alphabetically: Critical -> 0, Safe -> 1, Warning -> 2.
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
     
@@ -51,11 +54,11 @@ def train_model():
         'classes': label_encoder.classes_.tolist()
     }
     
-    os.makedirs('p:\\Honeywell\\models', exist_ok=True)
-    with open('p:\\Honeywell\\models\\xgboost.pkl', 'wb') as f:
+    os.makedirs(models_dir, exist_ok=True)
+    with open(model_path, 'wb') as f:
         pickle.dump(model_data, f)
     
-    print("Saved XGBoost model artifacts to p:\\Honeywell\\models\\xgboost.pkl")
+    print(f"Saved XGBoost model artifacts to {model_path}")
 
 if __name__ == '__main__':
     train_model()

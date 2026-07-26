@@ -39,7 +39,10 @@ def startup_db_seeding():
     try:
         # Seed recipes from data/recipes.csv if empty
         if db.query(Recipe).count() == 0:
-            csv_path = 'p:\\Honeywell\\data\\recipes.csv'
+            BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            csv_path = os.path.join(BASE_DIR, 'data', 'recipes.csv')
+            if not os.path.exists(csv_path):
+                csv_path = os.path.join(os.path.dirname(__file__), "..", "data", "recipes.csv")
             if os.path.exists(csv_path):
                 df = pd.read_csv(csv_path)
                 for _, row in df.iterrows():
