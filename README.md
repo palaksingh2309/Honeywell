@@ -20,21 +20,21 @@ An AI-powered real-time telemetry monitoring, predictive intelligence, and digit
 
 ```mermaid
 graph TD
-    subgraph UI Console (Next.js 16)
+    subgraph "UI Console (Next.js 16)"
         Dash[Command Center Dashboard]
         Twin[Digital Twin Sliders]
         Chat[Copilot Assistant]
         Audit[Operator Compliance History]
     end
 
-    subgraph API Backend (FastAPI)
+    subgraph "API Backend (FastAPI)"
         Predict[Inference Engine]
         XAI[SHAP TreeExplainer]
         KNN[Cosine Similarity KNN]
         DbFeed[Feedback Logging Service]
     end
 
-    subgraph Database
+    subgraph "Database"
         Supa[(Supabase PostgreSQL)]
     end
 
